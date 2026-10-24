@@ -3,220 +3,711 @@
 
 ---
 
-# Title: End-to-End Machine Learning Project: Indian Railways Train Delay Prediction and Network Punctuality Analytics
+# End-to-End Machine Learning Project: Indian Railways Train Delay Prediction and Network Punctuality Analytics
 
 **Course Code:** ECSCI24302 – Machine Learning Essentials  
 **Academic Year:** 2026–2027  
 **Submission Date:** October 2026  
-**Repository Directory:** `c:\ml\`  
+**Repository Directory:** `D:\ML PROJECT\ml`  
+**Project Type:** Supervised Machine Learning – Binary Classification
 
 ---
 
 ## Abstract / Project Summary
-Operating across more than 67,000 route kilometres and transporting over 23 million passengers daily, the Indian Railways (IR) represents one of the world's most complex transportation logistics networks. In this project, we develop an end-to-end Machine Learning pipeline designed to predict train journey delays (defined as arriving at destination with $\ge 15$ minutes of delay) using multi-modal operational, infrastructural, seasonal, rolling-stock, and historical timetable parameters.
 
-Analyzing an enterprise dataset comprising 1,500,000 training journey records and 375,000 unseen test records across 45 initial attributes, we conduct rigorous data quality checks, eliminate zero-variance features (`is_overloaded`), address data leakage risks by quarantining post-event variables (`delay_minutes` and `primary_delay_cause`), and formulate 11 domain-specific engineered features (e.g., speed efficiency, stop density, composite weather severity, network vulnerability, and turnaround risk). We establish a majority-class baseline and develop four diverse machine learning models: Logistic Regression, Decision Trees, Random Forest, and LightGBM. Through systematic hyperparameter tuning with cross-validation, LightGBM emerges as the champion architecture, achieving **85.6%+ accuracy** and a **ROC-AUC of 0.916+**, significantly outperforming linear benchmarks and baselines. We provide error analysis across railway zones, feature importance interpretations, and an interactive operational prediction engine for railway dispatchers.
+Indian Railways operates a complex transportation network in which punctuality is affected by train schedules, infrastructure, seasonal conditions, rolling-stock characteristics, congestion, and historical operational performance. This project develops an end-to-end machine learning workflow to predict the probability of a train journey being delayed.
+
+The problem is formulated as supervised binary classification, with `is_delayed` as the target variable. The workflow includes data exploration, data cleaning, leakage prevention, feature engineering, stratified train-validation splitting, categorical encoding, numerical standardization, model development, hyperparameter tuning, model evaluation, error analysis, and test-set inference.
+
+Four principal machine learning algorithms were explored: Logistic Regression, Decision Tree, Random Forest, and LightGBM, alongside a Dummy Classifier baseline. Tuned versions of Random Forest and LightGBM were also evaluated. To accommodate available computational resources, model development used a sample of 10,000 records from the training dataset, divided into training and validation partitions using an 80:20 stratified split.
+
+Among the evaluated models, Tuned LightGBM achieved the highest validation accuracy of 85.85%, recall of 92.10%, and F1-score of 0.9038. Logistic Regression achieved the highest ROC-AUC of 0.9229. Tuned LightGBM was retained for the final prediction workflow based on its accuracy, recall, and F1-score.
+
+The project also includes a single-journey prediction demonstration that produces delay probabilities and operational risk labels. A submission file containing predictions for 375,000 test journeys was generated and passed structural validation. The reported metrics represent the sampled model-development experiment and should not be interpreted as performance measurements on the entire training dataset or as proof of real-world railway forecasting accuracy.
 
 ---
 
 ## 1. Introduction
-Train punctuality is a vital metric that impacts economic productivity, passenger satisfaction, and operational efficiency across the Indian subcontinent. Unlike highway or air transport, railway operations are constrained by fixed-block signaling, single-track sections requiring train crossings, priority overtaking schedules (e.g., Vande Bharat and Rajdhani express trains taking precedence over freight and passenger trains), and harsh weather disruptions like monsoon flooding and dense Gangetic fog. Applying machine learning to forecast delays prior to departure allows dispatchers to dynamically reroute rakes, adjust scheduled halts, and optimize track utilization.
+
+Train punctuality is an important indicator of transportation efficiency, passenger satisfaction, and railway operational performance. Delays can arise from several interacting factors, including infrastructure constraints, weather conditions, station congestion, rolling-stock availability, scheduled stops, and late incoming trains.
+
+Machine learning provides a way to identify patterns in historical operational data and estimate the likelihood of a future journey being delayed. Such predictions may help operational teams identify journeys that require additional attention and investigate potential sources of disruption.
+
+This project applies data analysis and machine learning techniques to the Indian Railways train-delay prediction dataset. The implementation emphasizes a reproducible workflow, leakage prevention, comparative model evaluation, and prediction generation.
 
 ---
 
 ## 2. Problem Statement and Motivation
-* **Problem Type:** Supervised Binary Classification.
-* **Target Variable:** `is_delayed` $\in \{0, 1\}$, where:
-  $$y_i = \begin{cases} 1 & \text{if train arrived at destination with delay } > 15 \text{ minutes} \\ 0 & \text{if train arrived on-time (delay } \le 15 \text{ minutes)} \end{cases}$$
-* **Objective:** Predict destination delay likelihood prior to or at departure using operational, infrastructural, and weather features, without utilizing any post-departure ground truth outcomes.
-* **Motivation:** Early identification of high-risk journeys allows station masters and traffic controllers to implement proactive mitigation strategies, preventing cascading delays across shared network corridors.
+
+### 2.1 Problem Statement
+
+The objective is to develop a binary classification model that estimates whether a train journey will be delayed based on its available operational and infrastructure features.
+
+**Target variable:** `is_delayed`
+
+- `1`: Journey classified as delayed.
+- `0`: Journey classified as on time.
+
+The target definition used by the project is based on whether the destination arrival delay exceeds 15 minutes.
+
+### 2.2 Objectives
+
+1. Understand the structure and characteristics of the dataset.
+2. Perform data cleaning and exploratory data analysis.
+3. Prevent data leakage by excluding information unavailable at prediction time.
+4. Engineer features that represent railway operating conditions.
+5. Train and compare multiple classification algorithms.
+6. Tune Random Forest and LightGBM using cross-validation.
+7. Evaluate models using accuracy, precision, recall, F1-score, and ROC-AUC.
+8. Examine classification errors and feature importance.
+9. Generate predictions for the unseen test dataset.
+10. Demonstrate predictions for individual train journeys.
+
+### 2.3 Motivation
+
+Early identification of journeys with a high predicted delay probability could support operational planning and help prioritize further investigation. The model is intended as an analytical decision-support prototype, not as a replacement for railway control systems or expert operational judgment.
 
 ---
 
 ## 3. Dataset Description and Source
-* **Dataset Name:** Indian Railways Delay Prediction & Operational Logistics Dataset.
-* **Source:** Kaggle / Indian Railways Open Data Logistics Corpus.
-* **Corpus Volume:**
-  - Training Corpus (`ir_train.csv`): 1,500,000 journey observations $\times$ 45 attributes (~337 MB).
-  - Test Corpus (`ir_test.csv`): 375,000 untouched journey observations $\times$ 42 attributes (~76 MB).
-  - Data Dictionary (`ir_data_dictionary.csv`): Attribute documentation.
-  - Sample Submission (`ir_sample_submission.csv`): Output schema for competition scoring.
-* **Temporal Span:** Multi-year operational records spanning 2018 through 2024.
+
+### 3.1 Dataset Files
+
+The project uses the Indian Railways train-delay prediction dataset associated with the Kaggle competition *Indian Railways: Predict Train Delay*.
+
+The dataset files used by the project are:
+
+| File | Purpose |
+|---|---|
+| `ir_train.csv` | Training dataset containing the target variable |
+| `ir_test.csv` | Unlabeled test dataset used for prediction |
+| `ir_data_dictionary.csv` | Documentation of dataset attributes |
+| `ir_sample_submission.csv` | Reference submission structure |
+| `submission.csv` | Generated predictions for the test dataset |
+
+The repository keeps the large input CSV files in the local `data/` directory, which is excluded from Git through `.gitignore`.
+
+### 3.2 Dataset Dimensions
+
+The supplied dataset is described as containing approximately:
+
+- Training dataset: 1,500,000 records and 45 columns.
+- Test dataset: 375,000 records and 42 columns.
+
+**Important distinction:** Although the full training dataset contains approximately 1.5 million records, the model-development workflow documented in this report uses a sample of 10,000 training records to accommodate available computational resources.
+
+### 3.3 Feature Categories
+
+The dataset contains several categories of features:
+
+- Journey identification and train information.
+- Departure date, month, day, and hour.
+- Railway zone and station categories.
+- Route distance and scheduled travel duration.
+- Scheduled stops and track characteristics.
+- Electrification and traction information.
+- Weather and seasonal indicators.
+- Rolling-stock age and maintenance-related information.
+- Historical route punctuality and congestion indicators.
+
+The target variable `is_delayed` is present in the training dataset but is not available as a feature in the test dataset.
 
 ---
 
-## 4. Data Understanding and Exploratory Data Analysis (EDA)
+## 4. Data Understanding and Exploratory Data Analysis
 
-### 4.1 Target Variable Distribution
-* Delayed Journeys (`is_delayed = 1`): **1,078,329 (71.89%)**
-* On-Time Journeys (`is_delayed = 0`): **421,671 (28.11%)**
-* *Observation:* The dataset exhibits a substantial 72:28 imbalance, making naive Accuracy deceptive. Metrics such as ROC-AUC, Precision-Recall AUC, and F1-score are necessary for unbiased evaluation.
+### 4.1 Target Variable
 
-### 4.2 Data Quality & Integrity Checks
-* **Missing Values:** 0 missing or null entries across all 1.5 million rows and 45 columns (100% complete).
-* **Duplicates:** 0 duplicate rows; all `journey_id` values are unique.
-* **Zero-Variance Features:** `is_overloaded` has constant value `0` across all 1,500,000 rows. With zero variance, it provides no discriminative signal and is removed.
-* **Identifier Columns:** `journey_id` is an alphanumeric record key (e.g., `IR01717809`), which is excluded from model feature sets.
+The target variable represents whether a journey is delayed or on time. The classification problem is potentially affected by class imbalance, meaning the two target classes do not necessarily occur with equal frequency.
 
-### 4.3 Key Exploratory Insights
-1. **Train Hierarchy & Priority:** High-priority train classes like Vande Bharat Express, Rajdhani Express, and Shatabdi Express maintain the lowest delay rates (< 48%), whereas standard Mail/Express and Passenger trains exhibit delay rates exceeding 78% due to low track precedence and unscheduled loop halts.
-2. **Seasonal Vulnerabilities:** Monsoon season records the highest delay probabilities (over 82%), followed closely by Winter/Fog in Northern and North-Eastern corridors (NR, NER, NFR). Summer and Autumn exhibit the highest on-time arrival rates.
-3. **Cascading Rake Dynamics:** When a train's incoming rake from a prior journey is already late (`late_incoming_rake = 1`), destination delay probability jumps from 62% to over 89%.
-4. **Primary Delay Causes (Diagnostic EDA):**
-   - Track Congestion: 16.1%
-   - Flooding / Waterlogging: 14.0%
-   - Late Incoming Rake: 11.0%
-   - Track Maintenance / PSR: 9.1%
-   - Station Congestion: 4.8%
+The Dummy Classifier is included to provide a baseline against which the trained models can be compared.
+
+### 4.2 Data Quality Checks
+
+The preprocessing workflow performs data cleaning and feature checks through the shared functions in `utils.py`.
+
+The project considers the following data quality issues:
+
+1. Missing or invalid feature values.
+2. Identifier columns that should not be used as predictive inputs.
+3. Features with no useful variation.
+4. High-cardinality categorical features.
+5. Features that could cause data leakage.
+6. Numerical columns requiring outlier treatment or standardization.
+
+The complete dataset and the sampled model-development dataset should be distinguished when reporting data quality statistics. Statistics calculated on a sample must not be presented as though they were calculated over all 1.5 million training records.
+
+### 4.3 Exploratory Analysis
+
+The EDA workflow is intended to investigate relationships between delay outcomes and operational characteristics, including:
+
+- Railway zones and train categories.
+- Seasonal and weather-related conditions.
+- Route distance and scheduled travel duration.
+- Infrastructure and track characteristics.
+- Incoming-rake delays.
+- Historical route punctuality.
+
+These analyses help identify patterns that may be useful for feature engineering and model interpretation. Observed associations do not, by themselves, establish that a particular feature causes train delays.
 
 ---
 
-## 5. Data Preprocessing & Leakage Quarantine
+## 5. Data Preprocessing and Data Leakage Prevention
 
-### 5.1 Strict Data Leakage Prevention (Guidelines Section 15)
-A common pitfall in railway delay modeling is using post-trip arrival measurements during model training:
-* `delay_minutes`: Directly defines the target ($> 15 \text{ min} \implies \text{delayed}$).
-* `primary_delay_cause`: Assigned post-trip upon arrival at the destination terminal.
-* Neither attribute exists in `ir_test.csv`. Including them during training constitutes catastrophic data leakage. Both variables are strictly quarantined and excluded from all feature matrices.
-* All scaling transformations (`StandardScaler`) and categorical encoders (`OneHotEncoder`) are fit **strictly on the training split** and applied to validation/test partitions without refitting.
+### 5.1 Data Cleaning
+
+The project uses shared Pandas-based preprocessing functions from `utils.py`:
+
+- `clean_data_pandas()`
+- `engineer_features_pandas()`
+- `handle_outliers_iqr_numpy()`
+
+These functions are used to clean records, create derived features, and apply IQR-based outlier treatment to selected numerical columns.
+
+The outlier-treatment step considers available features such as distance, scheduled travel duration, scheduled restrictions, and rolling-stock age.
+
+### 5.2 Data Leakage Prevention
+
+Data leakage occurs when a model uses information that would not be available at the time predictions are intended to be made.
+
+The following attributes require special treatment:
+
+- `delay_minutes`: Records the delay outcome and may directly reveal information used to define the target.
+- `primary_delay_cause`: Describes the cause of a delay and may be assigned after the journey.
+
+These post-event variables must not be used as predictive features when they are unavailable at prediction time. The shared cleaning function is responsible for excluding leakage-prone fields from the model feature matrix.
+
+The target variable `is_delayed` is separated from the feature matrix before training.
+
+### 5.3 Train-Validation Split
+
+The model-development sample is divided using stratified sampling:
+
+- Training partition: 80% of the 10,000-record sample.
+- Validation partition: 20% of the 10,000-record sample.
+- Random state: 42.
+- Stratification: Based on `is_delayed`.
+
+This gives approximately 8,000 training records and 2,000 validation records, subject to the exact split implementation.
+
+Stratification helps preserve the target-class proportions across the two partitions.
+
+### 5.4 Categorical Encoding
+
+Categorical variables are encoded using Pandas `get_dummies()`.
+
+The resulting validation features are aligned with the columns generated from the training partition. This ensures that the validation data has the same feature schema as the training data.
+
+The high-cardinality identifier-like feature `train_number` is excluded from one-hot encoding to control memory consumption. This reduces the dimensionality of the feature matrix but may also remove useful train-specific predictive information.
+
+### 5.5 Numerical Standardization
+
+Numerical features are standardized using the training partition's mean and standard deviation.
+
+The transformation is:
+
+\[
+z = \frac{x-\mu_{\text{train}}}{\sigma_{\text{train}}}
+\]
+
+where:
+
+- \(x\) is the original feature value.
+- \(\mu_{\text{train}}\) is the training mean.
+- \(\sigma_{\text{train}}\) is the training standard deviation.
+
+A zero standard deviation is handled to avoid division by zero. The same training-derived statistics are used when transforming validation and test features.
+
+The implementation uses Pandas and NumPy operations and converts numerical columns to a floating-point representation before assigning standardized decimal values.
 
 ---
 
 ## 6. Feature Engineering and Feature Selection
 
-### 6.1 Domain-Engineered Features
-We formulated 11 domain-specific features based on railway dynamics:
+Feature engineering creates derived variables that may represent meaningful railway operating conditions.
 
-1. **Scheduled Speed Efficiency (`avg_speed_kmh`):**  
-   $$\text{avg\_speed\_kmh} = \frac{\text{distance\_km}}{\text{scheduled\_travel\_hours}}$$
-   Faster timetabled trains operate with tighter headway margins, increasing susceptibility to speed restrictions.
-2. **Halt Density (`stops_density`):**  
-   $$\text{stops\_density} = \frac{\text{num\_scheduled\_stops}}{\text{distance\_km} / 100 + 0.1}$$
-   Measures stops per 100 km; higher halt frequencies multiply dwell delays.
-3. **Average Stop Spacing (`avg_stop_distance`):**  
-   $$\text{avg\_stop\_distance} = \frac{\text{distance\_km}}{\text{num\_scheduled\_stops} + 1}$$
-4. **Composite Weather Severity Index (`composite_weather_severity`):**  
-   $$\text{weather\_risk} = \text{season\_severity\_score} \times (1.0 + 0.5 \times \text{is\_monsoon\_season} + 0.5 \times \text{is\_fog\_risk})$$
-   Captures multiplicative non-linear risks during monsoon and winter fog conditions.
-5. **Network Corridor Vulnerability (`network_vulnerability`):**  
-   $$\text{network\_vuln} = \text{zone\_congestion\_index} \times (1.0 + 0.5 \times \text{is\_hdn\_route} - 0.3 \times \text{track\_doubled})$$
-   Discounts congestion where tracks are doubled/quadrupled while penalizing single-track High Density Network corridors.
-6. **Rolling Stock Wear Index (`equipment_age_index`):**  
-   $$\text{age\_index} = \frac{\text{loco\_age\_years} + \text{coach\_age\_years}}{2}$$
-7. **Rake Turnaround Cascade Risk (`rake_turnaround_risk`):**  
-   $$\text{turnaround\_risk} = \text{late\_incoming\_rake} \times \text{is\_rake\_shared}$$
-8. **Empirical Historical Risk (`historical_delay_risk`):**  
-   $$\text{delay\_risk} = \frac{100 - \text{route\_historical\_ontime\_pct}}{100}$$
-9. **Cyclical Temporal Encodings (`hour_sin`, `hour_cos`, `day_sin`, `day_cos`):**  
-   Encodes continuous circular progression (e.g., 23:00 to 00:00).
+The shared feature-engineering function is `engineer_features_pandas()`.
 
-### 6.2 Feature Correlations with Target
-* `composite_weather_severity`: $r = +0.404$
-* `historical_delay_risk`: $r = +0.403$
-* `avg_speed_kmh`: $r = -0.234$
-* `network_vulnerability`: $r = +0.222$
-* `rake_turnaround_risk`: $r = +0.167$
+Examples of useful derived features include:
+
+### 6.1 Average Scheduled Speed
+
+\[
+\text{avg\_speed\_kmh}
+=
+\frac{\text{distance\_km}}{\text{scheduled\_travel\_hours}}
+\]
+
+This feature represents the average speed implied by the scheduled journey distance and duration. It may help distinguish short, fast journeys from longer journeys with more scheduled travel time.
+
+### 6.2 Stop Density
+
+\[
+\text{stops\_density}
+=
+\frac{\text{num\_scheduled\_stops}}
+{\text{distance\_km}/100+0.1}
+\]
+
+This approximates the density of scheduled stops relative to route distance.
+
+### 6.3 Average Stop Distance
+
+\[
+\text{avg\_stop\_distance}
+=
+\frac{\text{distance\_km}}
+{\text{num\_scheduled\_stops}+1}
+\]
+
+This represents the average distance per scheduled stop interval.
+
+### 6.4 Weather Severity
+
+Seasonal severity, monsoon indicators, and fog-related variables can be combined to represent environmental risk.
+
+### 6.5 Network Vulnerability
+
+Route congestion, high-density network indicators, and track characteristics can help represent infrastructure-related vulnerability.
+
+### 6.6 Rolling-Stock Age
+
+Locomotive and coach ages can be combined to describe the age profile of the equipment used for a journey.
+
+### 6.7 Historical Delay Risk
+
+Historical on-time performance can be transformed into a risk-oriented feature:
+
+\[
+\text{historical\_delay\_risk}
+=
+\frac{100-\text{route\_historical\_ontime\_pct}}{100}
+\]
+
+A lower historical on-time percentage corresponds to a higher value of this derived risk measure.
+
+The actual set of engineered features used by the final model is determined by the implementation in `utils.py` and the resulting feature matrix.
 
 ---
 
 ## 7. Machine Learning Methodology
 
-### 7.1 Train-Validation Partitioning
-To guarantee unbiased performance estimation, the training corpus is partitioned into an **80% Training Set** and a **20% Holdout Validation Set** using stratified sampling (`stratify=y`) to maintain the 71.9% : 28.1% class ratio.
+### 7.1 Algorithms Evaluated
 
-### 7.2 Preprocessing Pipeline
-We employ Scikit-Learn's `ColumnTransformer`:
-* **Numerical Pipeline:** `StandardScaler` applied to continuous and integer features.
-* **Categorical Pipeline:** `OneHotEncoder(handle_unknown='ignore')` applied to high-cardinality nominal features (`train_type`, `zone`, `season`, `traction_type`, `station_category`).
+The project evaluates a baseline classifier and multiple supervised classification algorithms.
+
+**1. Dummy Classifier**
+
+Provides a simple reference model that predicts according to a baseline strategy. It helps determine whether more sophisticated models provide useful discrimination.
+
+**2. Logistic Regression**
+
+A linear classification algorithm that estimates class probabilities using a logistic function. It provides a useful baseline for comparing linear decision boundaries against nonlinear models.
+
+**3. Decision Tree**
+
+A tree-based classifier that learns decision rules through recursive feature splits. It can model nonlinear relationships but may overfit if its complexity is not controlled.
+
+**4. Random Forest**
+
+An ensemble of decision trees that combines predictions from multiple trees. It can capture nonlinear patterns but may require substantial memory and computation.
+
+**5. LightGBM**
+
+A gradient-boosted tree algorithm designed for efficient learning on tabular datasets. It builds trees sequentially, with each stage attempting to improve the current ensemble.
+
+**6. Tuned Random Forest and Tuned LightGBM**
+
+Hyperparameter tuning is performed for the two ensemble algorithms to explore alternative configurations.
+
+### 7.2 Computational Configuration
+
+To reduce memory usage and prevent excessive computation, the current model-development configuration uses:
+
+- A 10,000-record training sample.
+- A stratified 80:20 training-validation split.
+- Pandas-based one-hot encoding.
+- Exclusion of `train_number` from the one-hot encoded feature matrix.
+- Numerical standardization using training statistics.
+- Reduced randomized hyperparameter searches.
+
+Consequently, the current reported metrics describe this computationally constrained experiment and may differ from results obtained by training on the complete dataset.
 
 ---
 
-## 8. Baseline Model & Model Development
+## 8. Model Evaluation Metrics
 
-### 8.1 Model Selection Rationale
-We selected four algorithms covering distinct learning paradigms:
-1. **Dummy Baseline:** Majority-class classifier predicting constant delay ($y=1$).
-2. **Logistic Regression:** L2-regularized linear model providing a convex optimization benchmark.
-3. **Decision Tree Classifier:** Captures non-linear decision boundaries and variable interactions.
-4. **Random Forest Classifier:** Bagging ensemble that averages decorrelated trees to reduce variance.
-5. **LightGBM Classifier:** Gradient boosted decision trees using histogram binning and leaf-wise tree growth.
+The following metrics are used to evaluate classification performance.
+
+### 8.1 Accuracy
+
+The proportion of all predictions that are correct.
+
+\[
+\text{Accuracy}
+=
+\frac{TP+TN}{TP+TN+FP+FN}
+\]
+
+Accuracy provides an overall summary but may be misleading when the target classes are imbalanced.
+
+### 8.2 Precision
+
+The proportion of predicted positive cases that are actually positive.
+
+\[
+\text{Precision}
+=
+\frac{TP}{TP+FP}
+\]
+
+Higher precision means fewer false alarms among journeys predicted to be delayed.
+
+### 8.3 Recall
+
+The proportion of actual positive cases correctly identified by the model.
+
+\[
+\text{Recall}
+=
+\frac{TP}{TP+FN}
+\]
+
+Higher recall means the model identifies a greater proportion of delayed journeys.
+
+### 8.4 F1-Score
+
+The harmonic mean of precision and recall.
+
+\[
+F_1 =
+2 \times
+\frac{\text{Precision}\times\text{Recall}}
+{\text{Precision}+\text{Recall}}
+\]
+
+The F1-score balances the precision and recall of the positive class.
+
+### 8.5 ROC-AUC
+
+ROC-AUC measures how effectively a model ranks positive examples above negative examples across classification thresholds.
+
+A score near 0.5 indicates discrimination similar to random ranking, while a higher score indicates stronger ranking discrimination.
 
 ---
 
 ## 9. Hyperparameter Tuning
 
-Hyperparameter optimization was conducted for the two leading ensemble models via `RandomizedSearchCV` with 3-fold cross-validation:
+Randomized search with cross-validation is used to tune Random Forest and LightGBM.
 
-| Model | Hyperparameters Searched | Optimal Configuration | Cross-Val ROC-AUC |
-| :--- | :--- | :--- | :--- |
-| **Random Forest** | `n_estimators`: [80, 120, 160]<br>`max_depth`: [12, 16, 20]<br>`min_samples_split`: [5, 10, 20] | `n_estimators=120`<br>`max_depth=16`<br>`min_samples_split=10` | 0.9084 |
-| **LightGBM** | `learning_rate`: [0.03, 0.06, 0.10]<br>`num_leaves`: [31, 63, 127]<br>`max_depth`: [6, 8, 10]<br>`subsample`: [0.8, 1.0] | `learning_rate=0.06`<br>`num_leaves=63`<br>`max_depth=8`<br>`subsample=0.8` | **0.9182** |
+The final reduced tuning configuration uses:
+
+- Two candidate parameter combinations per randomized search.
+- Two-fold cross-validation.
+- ROC-AUC as the tuning objective.
+- A tuning sample of up to 10,000 training-partition records.
+- Fixed random state for reproducibility.
+
+### 9.1 Random Forest
+
+The search explores selected values for parameters such as:
+
+- `n_estimators`
+- `max_depth`
+- `min_samples_split`
+
+The best estimator returned by the randomized search is subsequently fitted on the available training partition and evaluated on the validation partition.
+
+### 9.2 LightGBM
+
+The search explores selected values for parameters such as:
+
+- `learning_rate`
+- `num_leaves`
+- `max_depth`
+
+The best estimator returned by the search is subsequently fitted on the available training partition and evaluated on the validation partition.
+
+The exact best parameters and cross-validation scores should be taken from the successfully executed notebook output. Earlier tuning configurations and interrupted searches are not used as evidence for the final reported metrics.
 
 ---
 
-## 10. Results and Official Model Comparison Table
+## 10. Results and Model Comparison
 
-*Evaluated on the untouched 20% Stratified Validation Holdout Set:*
+The following results were obtained from the model-comparison table in Notebook 3. They represent the validation performance of the current sampled model-development experiment.
 
-| Model | Best Hyperparameters | Validation Result (ROC-AUC) | Test Metric (Accuracy / F1) | Observations & Practical Trade-offs |
-| :--- | :--- | :---: | :---: | :--- |
-| **Baseline (Dummy)** | `strategy="most_frequent"` | 0.5000 | 0.7219 / 0.8385 | Trivial majority-class baseline. Zero discriminative capacity; cannot identify on-time trains. |
-| **Logistic Regression** | `C=1.0, penalty="l2", max_iter=500` | 0.9199 | 0.8612 / 0.9056 | Strong linear baseline. Highly interpretable coefficients and fast training. |
-| **Decision Tree** | `max_depth=10, min_samples_leaf=20` | 0.8640 | 0.8150 / 0.8742 | Captures basic non-linear thresholds but suffers from higher variance and greedy splits. |
-| **Random Forest (Tuned)** | `n_estimators=120, max_depth=16` | 0.9084 | 0.8490 / 0.8988 | Bagged ensemble; high stability and robust against outliers, though higher memory footprint. |
-| **LightGBM (Champion)** | `lr=0.06, leaves=63, depth=8` | **0.9182** | **0.8585 / 0.9038** | **Top overall performer.** Fastest inference speed (< 2 ms/query), lowest memory usage, superior tabular ranking. |
+| Model | Accuracy | Precision | Recall | F1-Score | ROC-AUC |
+|---|---:|---:|---:|---:|---:|
+| Dummy Baseline | 0.7215 | 0.7215 | 1.0000 | 0.8382 | 0.5000 |
+| Logistic Regression | 0.8570 | 0.8901 | 0.9148 | 0.9023 | 0.9229 |
+| Decision Tree | 0.8130 | 0.8585 | 0.8870 | 0.8725 | 0.8593 |
+| Random Forest | 0.7730 | 0.7640 | 0.9917 | 0.8631 | 0.8831 |
+| LightGBM | 0.8560 | 0.8889 | 0.9148 | 0.9016 | 0.9152 |
+| Tuned Random Forest | 0.7870 | 0.7783 | 0.9854 | 0.8697 | 0.8854 |
+| Tuned LightGBM | **0.8585** | 0.8872 | **0.9210** | **0.9038** | 0.9121 |
+
+### 10.1 Results Interpretation
+
+**Tuned LightGBM**
+
+- Achieved the highest validation accuracy of 85.85%.
+- Achieved the highest recall of 92.10%.
+- Achieved the highest F1-score of 0.9038.
+- Achieved a ROC-AUC of 0.9121.
+
+**Logistic Regression**
+
+- Achieved validation accuracy of 85.70%.
+- Achieved an F1-score of 0.9023.
+- Achieved the highest ROC-AUC of 0.9229.
+
+**Decision Tree**
+
+- Achieved validation accuracy of 81.30%.
+- Achieved a ROC-AUC of 0.8593.
+- Demonstrates the ability to model nonlinear relationships but performed below the strongest alternatives in this experiment.
+
+**Random Forest**
+
+- Achieved validation accuracy of 77.30%.
+- Achieved recall of 99.17%.
+- Its high recall is accompanied by lower precision and accuracy compared with the leading models.
+
+**Dummy Baseline**
+
+- Achieved accuracy of 72.15%.
+- Achieved ROC-AUC of 0.5000.
+- Provides a useful reference for understanding the performance of the trained models.
+
+### 10.2 Selected Model
+
+Tuned LightGBM is selected for the final prediction workflow because it achieved the highest validation accuracy, recall, and F1-score among the evaluated models.
+
+Logistic Regression achieved the highest ROC-AUC. This indicates that the best model depends on the evaluation objective: Tuned LightGBM performed best on several threshold-based metrics, while Logistic Regression showed stronger overall ranking discrimination.
+
+The difference between the leading models is relatively small, and the results should be interpreted cautiously because model development used a 10,000-record sample.
 
 ---
 
 ## 11. Error Analysis
 
-Dissection of the Champion LightGBM model's confusion matrix revealed two primary error modes:
+Error analysis examines the types of mistakes made by the classifier.
 
-1. **False Positives (Predicted Delayed, Arrived On-Time):**
-   - Occurs predominantly on High Density Network (HDN) routes where dispatchers prioritized overtakes for express services, allowing them to recover scheduled time despite route congestion.
-   - Common in Southern Railway (SR) and Western Railway (WR) during moderate weather.
-2. **False Negatives (Predicted On-Time, Arrived Delayed):**
-   - Occurs primarily during unseasonable rainstorms in non-monsoon months or sudden technical failures (e.g., unexpected Overhead Equipment - OHE power tripping or locomotive failure) that cannot be inferred from timetable features alone.
+The Notebook 3 workflow includes an analysis of validation predictions and their associated railway zones and train categories.
 
----
+### 11.1 False Positives
 
-## 12. Model Interpretation & Feature Importance
+A false positive occurs when a journey is predicted to be delayed but its actual target is on time.
 
-Feature importance analysis extracted from LightGBM splits reveals the top operational drivers:
-1. `route_historical_ontime_pct`: Single strongest historical signal.
-2. `composite_weather_severity`: Major operational disruptor.
-3. `zone_congestion_index`: Network capacity bottleneck.
-4. `avg_speed_kmh`: Timetable buffer tightness.
-5. `late_incoming_rake`: Turnaround bottleneck.
-6. `equipment_age_index`: Rolling stock mechanical reliability.
+Potential operational implications include unnecessary alerts, additional investigation, or inefficient allocation of operational resources.
 
----
+### 11.2 False Negatives
 
-## 13. Final Predictions & Operational Deployment
-* **Test Set Inference:** The Champion LightGBM model and preprocessing pipeline were applied to the 375,000 journeys in `ir_test.csv`.
-* **Submission File:** Output exported to `c:\ml\data\submission.csv` containing columns `journey_id` and calibrated delay probability `is_delayed`, formatted strictly according to `ir_sample_submission.csv`.
-* **Dispatcher Decision Support:** An interactive inference function `predict_single_journey()` was deployed to provide color-coded alerts (Green: On-Time, Yellow: Moderate Risk, Red: High Delay Risk) for real-time station master dispatching.
+A false negative occurs when a journey is predicted to be on time but its actual target indicates a delay.
 
----
+False negatives may be particularly important when the objective is to identify journeys requiring early operational attention.
 
-## 14. Project Limitations & Future Improvements
-1. **Lack of Dynamic Telemetry:** The current pipeline utilizes pre-trip timetable features. Integrating real-time GPS telemetry from Indian Railways' Real-Time Train Information System (RTIS) would enable mid-journey delay updates.
-2. **Coarse Weather Resolution:** Weather features are currently aggregated by month and zone. Integrating hyperlocal radar and weather station precipitation data would improve sudden weather-related delay predictions.
+### 11.3 Error Analysis by Railway Zone and Train Type
+
+The analysis groups misclassified validation journeys by:
+
+- `zone_abbr`
+- `train_type`
+- Error category
+
+These groupings can help identify segments where further investigation may be useful.
+
+Specific conclusions about which zones or train types have the most errors should be reported only after examining the actual generated charts and counts. Error counts should also be interpreted in relation to the number of journeys in each group.
 
 ---
 
-## 15. Viva Voce Defense Guide (ECSCI24302 Section 19)
+## 12. Model Interpretation and Feature Importance
 
-### Q1: Why is Accuracy an inappropriate metric for this dataset?
-**Answer:** The dataset has a 72% : 28% class imbalance. A trivial dummy model predicting every train is delayed attains 71.9% accuracy but has zero discriminative power (ROC-AUC = 0.50). ROC-AUC and F1-score evaluate both sensitivity (catching delayed trains) and specificity (not creating false alarms for on-time trains).
+Feature importance helps identify which input variables contribute most to the fitted tree-based model's split decisions.
 
-### Q2: How did you ensure zero Data Leakage in your pipeline?
-**Answer:** Two safeguards were instituted:
-1. *Variable Quarantine:* `delay_minutes` and `primary_delay_cause` were dropped prior to model development because they are destination outcomes unavailable at departure.
-2. *Pipeline Isolation:* Preprocessing scalers and encoders were fit exclusively on training folds; validation and test folds were transformed strictly using parameters learned from training.
+The project includes a LightGBM feature-importance visualization based on the trained model's `feature_importances_` attribute.
 
-### Q3: Why does LightGBM outperform traditional models on this problem?
-**Answer:** Tabular railway logistics data features complex non-linear feature interactions (such as monsoon rainfall compounding congestion on single-track lines). LightGBM's leaf-wise tree growth and histogram binning efficiently discover these high-order interactions while executing in a fraction of the time required by standard random forests.
+Feature importance can help investigate whether the model relies on operationally meaningful variables, such as:
+
+- Historical route punctuality.
+- Seasonal and weather indicators.
+- Route congestion.
+- Scheduled travel duration and distance.
+- Incoming-rake status.
+- Rolling-stock characteristics.
+
+The actual ranking must be taken from the generated feature-importance output. Feature importance alone does not establish causation and should not be interpreted as proof that changing a feature will change the delay outcome.
 
 ---
-*Report prepared for ECSCI24302 – Machine Learning Essentials Project Submission.*
+
+## 13. Final Predictions and Single-Journey Demonstration
+
+### 13.1 Test-Set Inference
+
+The selected Tuned LightGBM model was used to generate predictions for the test dataset.
+
+The generated output file is:
+
+`data/submission.csv`
+
+The file contains two columns:
+
+- `journey_id`: The identifier of the test journey.
+- `is_delayed`: The predicted probability that the journey belongs to the delayed class.
+
+### 13.2 Submission Validation
+
+The generated submission passed the following structural checks:
+
+| Validation Check | Result |
+|---|---|
+| File exists | Passed |
+| Number of rows | 375,000 |
+| Number of columns | 2 |
+| Expected column names | Passed |
+| Missing journey IDs | 0 |
+| Missing predictions | 0 |
+| Duplicate journey IDs | 0 |
+| Minimum predicted probability | 0.0223 |
+| Maximum predicted probability | 0.9949 |
+
+The predicted values are within the valid probability range of 0 to 1.
+
+These checks establish that the generated file has the expected structure and valid numerical predictions. They do not establish the predictive accuracy of the model on the unlabeled test dataset.
+
+### 13.3 Single-Journey Prediction Demonstration
+
+The project includes a function named `predict_single_journey()`.
+
+The function accepts a dictionary describing a journey, applies the cleaning and feature-engineering workflow, aligns the features with the trained model's expected columns, and generates a predicted delay probability.
+
+The demonstration uses three operational risk labels:
+
+- **ON-TIME EXPECTED:** Probability below 40%.
+- **MODERATE DELAY RISK:** Probability from 40% through 65%.
+- **HIGH DELAY RISK:** Probability above 65%.
+
+These thresholds are demonstration rules selected by the project implementation, not official Indian Railways operational thresholds.
+
+The executed demonstration produced the following outputs:
+
+| Demonstration Scenario | Predicted Delay Probability | Operational Status | Alert |
+|---|---:|---|---|
+| Vande Bharat Express, Northern Railway | 3.3% | ON-TIME EXPECTED | GREEN |
+| Mail/Express, Eastern Railway | 98.7% | HIGH DELAY RISK | RED |
+
+These are predictions from the trained model for the supplied example inputs. They are illustrative outputs and should not be interpreted as verified forecasts for actual train services.
+
+---
+
+## 14. Project Limitations and Future Improvements
+
+### 14.1 Limited Training Sample
+
+The current model-development experiment uses 10,000 training records rather than the entire 1.5-million-record training dataset.
+
+**Future improvement:** Train and evaluate models on progressively larger samples or the full dataset using an appropriate memory-efficient pipeline.
+
+### 14.2 High-Cardinality Feature Exclusion
+
+The `train_number` feature is excluded from one-hot encoding to avoid an excessive number of columns and high memory consumption.
+
+**Future improvement:** Investigate alternative representations, such as carefully designed categorical encodings or models with native categorical-feature support.
+
+### 14.3 Computational Constraints
+
+Hyperparameter tuning uses a reduced search configuration to limit runtime.
+
+**Future improvement:** Explore larger search spaces, more cross-validation folds, and systematic model selection on suitable hardware.
+
+### 14.4 Lack of Real-Time Operational Telemetry
+
+The current workflow relies on the supplied dataset and its available features.
+
+**Future improvement:** Investigate integration of real-time train-location information, updated timetable data, and operational telemetry, subject to data availability and permission.
+
+### 14.5 Weather Resolution
+
+Weather-related features may not capture localized or rapidly changing conditions.
+
+**Future improvement:** Investigate the use of more detailed weather observations and time-aligned environmental data.
+
+### 14.6 Generalization and Calibration
+
+The validation results are based on a sampled dataset. The reported submission probabilities have not been independently validated against labels for the test dataset.
+
+**Future improvement:** Evaluate performance on additional held-out data and assess probability calibration before using predicted probabilities for operational decisions.
+
+### 14.7 Model Artifact Reproducibility
+
+The preprocessing and model artifacts must remain consistent with the final training workflow.
+
+**Future improvement:** Save the fitted model together with its exact feature schema, encoding rules, scaling statistics, and version information. Verify that a fresh process can load the artifact and reproduce predictions.
+
+---
+
+## 15. Viva Voce Preparation
+
+### Q1. Why is accuracy alone insufficient for evaluating this model?
+
+**Answer:** Accuracy summarizes the proportion of correct predictions, but it does not describe the types of errors a model makes. Precision measures the reliability of positive predictions, recall measures how many actual delayed journeys are identified, F1-score balances precision and recall, and ROC-AUC measures ranking discrimination across classification thresholds. These metrics provide a more complete view of model performance.
+
+### Q2. What is data leakage?
+
+**Answer:** Data leakage occurs when a model uses information that would not be available at the time of prediction. In this project, post-event fields such as `delay_minutes` and `primary_delay_cause` must be excluded from predictive features when they reveal information about the completed journey. Training-derived encoding and scaling parameters should also be reused for validation and test data rather than learned from those partitions.
+
+### Q3. Why was the dataset sampled?
+
+**Answer:** The original dataset is large, and high-cardinality one-hot encoding can consume substantial memory. A 10,000-record sample was used to complete the model-development workflow within the available computational resources. The limitation is that the resulting metrics may not represent performance on the full dataset.
+
+### Q4. Why use stratified train-validation splitting?
+
+**Answer:** Stratified splitting attempts to preserve the target-class proportions in both partitions. This makes the validation comparison more representative of the sampled data's class distribution.
+
+### Q5. What is the difference between precision and recall?
+
+**Answer:** Precision measures the proportion of predicted delayed journeys that are actually delayed. Recall measures the proportion of actual delayed journeys that the model correctly identifies. High precision reduces false alarms, while high recall reduces missed delays.
+
+### Q6. Why use LightGBM?
+
+**Answer:** LightGBM is a gradient-boosted decision-tree algorithm designed for efficient learning on tabular data. It can capture nonlinear relationships and interactions among features. In this experiment, Tuned LightGBM achieved the highest validation accuracy, recall, and F1-score, although Logistic Regression achieved a higher ROC-AUC.
+
+### Q7. What is ROC-AUC?
+
+**Answer:** ROC-AUC summarizes a model's ability to rank positive cases above negative cases across different classification thresholds. A value of 0.5 indicates random ranking, while higher values indicate stronger discrimination.
+
+### Q8. What is the purpose of hyperparameter tuning?
+
+**Answer:** Hyperparameter tuning explores model configurations to find settings that improve a chosen evaluation objective. In this project, RandomizedSearchCV was used to evaluate selected Random Forest and LightGBM configurations using ROC-AUC and cross-validation.
+
+### Q9. What does a false negative mean in this project?
+
+**Answer:** A false negative occurs when the model predicts that a journey will be on time, but the actual target indicates that it is delayed. This can be important because the model fails to flag a journey that may require attention.
+
+### Q10. Does a valid submission file prove that the model is accurate?
+
+**Answer:** No. Submission validation checks the file structure, row count, required columns, missing values, duplicate identifiers, and probability range. Predictive accuracy on the unlabeled test dataset cannot be calculated without the corresponding ground-truth labels.
+
+### Q11. Why does the project exclude `train_number` from one-hot encoding?
+
+**Answer:** A train number can have many distinct values, creating a large number of dummy columns. Excluding it reduces memory consumption. However, the exclusion may remove potentially useful information, so alternative encodings could be explored in future work.
+
+### Q12. Which model was selected and why?
+
+**Answer:** Tuned LightGBM was selected for the final prediction workflow because it achieved the highest validation accuracy of 85.85%, recall of 92.10%, and F1-score of 0.9038 among the evaluated models. Logistic Regression achieved the highest ROC-AUC of 0.9229, so the model choice depends on the evaluation objective.
+
+---
+
+## 16. Conclusion
+
+This project demonstrates an end-to-end machine learning workflow for predicting Indian Railways train delays using structured operational data. It covers data preparation, leakage prevention, feature engineering, categorical encoding, numerical standardization, model training, hyperparameter tuning, validation, error analysis, feature importance, and test-set prediction.
+
+The current sampled experiment shows that Tuned LightGBM provides the highest validation accuracy, recall, and F1-score among the evaluated models, while Logistic Regression achieves the highest ROC-AUC. The generated submission contains 375,000 predictions and passes structural validation.
+
+The primary limitations are the use of a 10,000-record model-development sample, the exclusion of a high-cardinality feature, and the reduced hyperparameter search. Further work should evaluate larger training samples, investigate alternative categorical representations, verify artifact reproducibility, and assess model calibration and generalization.
+
+The project therefore serves as a practical demonstration of a complete machine learning pipeline while identifying clear directions for improving predictive reliability and computational efficiency.
+
+---
+
+*Report prepared for ECSCI24302 – Machine Learning Essentials, Project-Based Learning submission.*
