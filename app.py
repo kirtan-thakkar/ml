@@ -1222,10 +1222,10 @@ elif app_mode == "🤖 Model Development & Benchmarks":
     ax_comp.tick_params(colors='#9CA3AF')
     ax_comp.set_ylim(60, 105)
     ax_comp.grid(axis='y', linestyle='--', alpha=0.15, color='#CBD5E1')
-    ax_comp.legend(facecolor='#101622', edgecolor='rgba(212,175,55,0.3)', labelcolor='#F5F5F5', fontsize=8.5)
+    ax_comp.legend(facecolor='#101622', edgecolor='#3A3018', labelcolor='#F5F5F5', fontsize=8.5)
     
     for spine in ax_comp.spines.values():
-        spine.set_color('rgba(212, 175, 55, 0.2)')
+        spine.set_color('#2A2415')
         
     plt.tight_layout()
     st.pyplot(fig_comp)
@@ -1460,7 +1460,7 @@ elif app_mode == "🗺️ Network Punctuality & 16 Zones":
     ax_z.grid(True, linestyle='--', alpha=0.15, color='#CBD5E1')
     
     for spine in ax_z.spines.values():
-        spine.set_color('rgba(212, 175, 55, 0.2)')
+        spine.set_color('#2A2415')
         
     plt.tight_layout()
     st.pyplot(fig_z)

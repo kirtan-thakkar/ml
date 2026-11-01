@@ -157,9 +157,9 @@ def build_pptx(output_path="deliverables/Project_Presentation.pptx"):
     add_card(s1, Inches(1.0), Inches(4.3), Inches(5.6), Inches(2.5), title="Student Project Team", bg_color=BG_LIGHT)
     tb_t = s1.shapes.add_textbox(Inches(1.2), Inches(4.8), Inches(5.2), Inches(1.9))
     tf_t = tb_t.text_frame
-    add_bullet(tf_t, "Team Member 1 (Lead): ", "[Student Name 1]  |  [Enrollment No. 1]", font_size=10.5)
-    add_bullet(tf_t, "Team Member 2: ", "[Student Name 2]  |  [Enrollment No. 2]", font_size=10.5)
-    add_bullet(tf_t, "Team Member 3: ", "[Student Name 3]  |  [Enrollment No. 3]", font_size=10.5)
+    add_bullet(tf_t, "Team Member 1 (Lead): ", "Dhruv  |  [Enrollment No. 1]", font_size=10.5)
+    add_bullet(tf_t, "Team Member 2: ", "Darshi  |  [Enrollment No. 2]", font_size=10.5)
+    add_bullet(tf_t, "Team Member 3: ", "Kirtan  |  [Enrollment No. 3]", font_size=10.5)
     add_bullet(tf_t, "Class & Semester: ", "B.Tech Computer Science & Engineering (2nd Year)", font_size=10.5)
 
     # Faculty & Metadata Card
@@ -617,9 +617,9 @@ def build_pdf_from_slides(output_path="deliverables/Project_Presentation.pdf"):
     s1_t_data = [
         [Paragraph("Student Project Team", styles['CardTitle']), Paragraph("Academic & Evaluation Details", styles['CardTitle'])],
         [
-            Paragraph("• <b>Team Lead:</b> [Student Name 1]  |  [Enrollment No. 1]<br/>"
-                      "• <b>Team Member 2:</b> [Student Name 2]  |  [Enrollment No. 2]<br/>"
-                      "• <b>Team Member 3:</b> [Student Name 3]  |  [Enrollment No. 3]<br/>"
+            Paragraph("• <b>Team Lead:</b> Dhruv  |  [Enrollment No. 1]<br/>"
+                      "• <b>Team Member 2:</b> Darshi  |  [Enrollment No. 2]<br/>"
+                      "• <b>Team Member 3:</b> Kirtan  |  [Enrollment No. 3]<br/>"
                       "• <b>Program:</b> B.Tech Computer Science & Engineering (2nd Year)", styles['CardBody']),
             Paragraph("• <b>Faculty Guide:</b> [Faculty Mentor Name], Dept. of CSE<br/>"
                       "• <b>Academic Year:</b> 2026–2027  |  Submission: November 2026<br/>"

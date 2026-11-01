@@ -151,9 +151,9 @@ def build_docx_report(target_path="reports/Final_Project_Report.docx"):
     format_row(tbl_team.rows[0], "0B2545", is_header=True, font_size=10, text_color="FFFFFF")
     
     t_rows = [
-        ("Team Lead", "[Student Name 1 - To Be Filled]", "[Enrollment No. 1 - To Be Filled]"),
-        ("Team Member 2", "[Student Name 2 - To Be Filled]", "[Enrollment No. 2 - To Be Filled]"),
-        ("Team Member 3", "[Student Name 3 - To Be Filled]", "[Enrollment No. 3 - To Be Filled]"),
+        ("Team Member 1 (Lead)", "Dhruv", "[Enrollment No. 1 - To Be Filled]"),
+        ("Team Member 2", "Darshi", "[Enrollment No. 2 - To Be Filled]"),
+        ("Team Member 3", "Kirtan", "[Enrollment No. 3 - To Be Filled]"),
         ("Faculty Guide", "[Faculty Mentor Name - To Be Filled]", "[Department of CSE / AI & DS]")
     ]
     for row_idx, data in enumerate(t_rows, start=1):
@@ -516,9 +516,9 @@ def build_pdf_report(target_path="reports/Final_Project_Report.pdf"):
 
     team_data = [
         [Paragraph("Project Role", styles['TableHead']), Paragraph("Student Full Name", styles['TableHead']), Paragraph("Enrollment Number", styles['TableHead'])],
-        [Paragraph("Team Lead", styles['TableCell']), Paragraph("[Student Name 1 - To Be Filled]", styles['TableCell']), Paragraph("[Enrollment No. 1 - To Be Filled]", styles['TableCell'])],
-        [Paragraph("Team Member 2", styles['TableCell']), Paragraph("[Student Name 2 - To Be Filled]", styles['TableCell']), Paragraph("[Enrollment No. 2 - To Be Filled]", styles['TableCell'])],
-        [Paragraph("Team Member 3", styles['TableCell']), Paragraph("[Student Name 3 - To Be Filled]", styles['TableCell']), Paragraph("[Enrollment No. 3 - To Be Filled]", styles['TableCell'])],
+        [Paragraph("Team Member 1 (Lead)", styles['TableCell']), Paragraph("Dhruv", styles['TableCell']), Paragraph("[Enrollment No. 1 - To Be Filled]", styles['TableCell'])],
+        [Paragraph("Team Member 2", styles['TableCell']), Paragraph("Darshi", styles['TableCell']), Paragraph("[Enrollment No. 2 - To Be Filled]", styles['TableCell'])],
+        [Paragraph("Team Member 3", styles['TableCell']), Paragraph("Kirtan", styles['TableCell']), Paragraph("[Enrollment No. 3 - To Be Filled]", styles['TableCell'])],
         [Paragraph("Faculty Guide", styles['TableCell']), Paragraph("[Faculty Mentor Name - To Be Filled]", styles['TableCell']), Paragraph("[Department of CSE / AI & DS]", styles['TableCell'])]
     ]
     t_team = Table(team_data, colWidths=[1.5*inch, 3.2*inch, 2.3*inch])
