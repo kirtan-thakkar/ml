@@ -1,0 +1,527 @@
+=== PAGE 1 ===
+ECSCI24302 – Machine Learning Essentials 
+ 
+PROJECT-BASED LEARNING (PBL) 
+Course: ECSCI24302 – Machine Learning Essentials 
+Project Instructions 
+1. Project Title 
+End-to-End Machine Learning Project: From Data Exploration to Model Evaluation 
+2. Project Objective 
+The objective of this project is to enable students to apply the complete Machine Learning workflow 
+to a real-world dataset. Students will identify a suitable problem, select an appropriate dataset from 
+a recognized public repository, analyse and preprocess the data, develop suitable Machine Learning 
+models, evaluate and compare their performance, and communicate their findings. 
+The project emphasizes learning by doing and requires students to understand the complete ML 
+pipeline rather than applying an algorithm in isolation. 
+3. Learning Outcomes 
+• 
+Formulate a clear real-world problem suitable for Machine Learning. 
+• 
+Select and understand a suitable dataset from Kaggle or the UCI Machine Learning Repository. 
+• 
+Perform data cleaning, exploratory data analysis, preprocessing, and feature engineering. 
+• 
+Select appropriate Machine Learning algorithms based on the problem and data. 
+• 
+Train, validate, tune, and evaluate Machine Learning models. 
+• 
+Compare models using appropriate performance metrics. 
+• 
+Interpret results, analyse errors, and justify modelling decisions. 
+• 
+Document and present the complete Machine Learning workflow professionally. 
+4. Project Team and Constraints 
+• 
+The project must be completed in a team of 2–3 students. 
+• 
+A team cannot have more than 3 members (Inter-batch project teams are not permitted). 
+• 
+Each team must work on a clearly defined Machine Learning problem. 
+• 
+Each team must use a dataset obtained from either Kaggle or the UCI Machine Learning 
+Repository. 
+• 
+The selected dataset must be sufficiently meaningful for applying an ML pipeline; very small toy 
+datasets should not be selected. 
+• 
+Teams must finalize both their team members and dataset by 30 September 2026. 
+• 
+Duplicate datasets/topics across teams should be avoided. Dataset approval will be based on 
+suitability and availability. 
+• 
+Students must cite the original dataset source in the final report. 
+
+
+=== PAGE 2 ===
+ECSCI24302 – Machine Learning Essentials 
+ 
+5. Dataset Selection 
+Each team must select one dataset from either Kaggle or the UCI Machine Learning Repository. The 
+dataset should support a meaningful Machine Learning problem and should provide enough 
+observations and features for analysis, modelling, and evaluation. 
+ 
+The project may involve classification, regression, clustering, or another appropriate Machine 
+Learning task. The selected task must be justified based on the problem and characteristics of the 
+dataset. 
+Students should first identify the real-world problem and then select an appropriate dataset and ML 
+approach. 
+6. Suggested Project Domains 
+• 
+Healthcare and disease prediction 
+• 
+Finance and credit-risk analysis 
+• 
+Customer behaviour and churn prediction 
+• 
+Education and student performance 
+• 
+Retail and sales prediction 
+• 
+Transportation and traffic analysis 
+• 
+Environment and weather 
+• 
+Sports analytics 
+• 
+Text classification 
+• 
+Audio or speech classification 
+• 
+Cybersecurity and anomaly detection 
+• 
+Energy consumption prediction 
+• 
+Any other suitable domain approved by the instructor. 
+The above domains are illustrative. Teams may propose another domain if the problem and dataset 
+are suitable. 
+7. Complete Machine Learning Pipeline 
+Every project must demonstrate the following stages. The exact techniques will depend on the 
+selected dataset and problem. 
+Stage 
+Required Work 
+1. Problem Definition 
+Define the real-world problem, objective, inputs, 
+target/output where applicable, and expected 
+outcome. 
+2. Dataset Acquisition 
+Obtain the dataset from Kaggle or UCI and 
+document dataset name, source, link, size, and 
+relevant usage/license information. 
+3. Dataset Understanding 
+Describe observations, features, target, data 
+types, categorical/numerical variables, and 
+identifier columns. 
+4. Data Quality Check 
+Check missing values, duplicate records, 
+inconsistent values, invalid entries, data types, 
+and potential outliers. 
+5. Exploratory Data Analysis 
+Perform univariate and bivariate analysis using 
+suitable statistics and visualizations. Identify 
+
+
+=== PAGE 3 ===
+ECSCI24302 – Machine Learning Essentials 
+ 
+important patterns and relationships. 
+6. Data Preprocessing 
+Handle missing values, duplicates, outliers, 
+categorical variables, and other data-quality 
+issues with justification. 
+7. Feature Engineering 
+Create, transform, combine, encode, scale, or 
+otherwise modify features where appropriate. 
+Explain each decision. 
+8. Feature Selection 
+Identify relevant features using appropriate 
+statistical, correlation-based, model-based, or 
+other justified techniques. 
+9. Train-Test Split 
+Divide data into training and testing sets. Use 
+validation data or cross-validation during model 
+development when appropriate. 
+10. Baseline Model 
+Build a simple baseline to provide a reference 
+for more advanced models. 
+11. Model Selection 
+Select at least three suitable ML algorithms and 
+explain why they are appropriate. 
+12. Model Training 
+Train the selected models using the training 
+data. 
+13. Hyperparameter Tuning 
+Tune important hyperparameters using 
+validation or cross-validation. 
+14. Model Evaluation 
+Evaluate final models on the untouched test set 
+using suitable metrics. 
+15. Model Comparison 
+Compare models in a single table and discuss 
+performance, complexity, and practical 
+considerations. 
+16. Error Analysis 
+Investigate incorrect predictions or large errors 
+and identify possible reasons. 
+17. Interpretation 
+Explain important features, model behaviour, 
+and meaningful patterns found in the results. 
+18. Final Prediction / Demonstration 
+Demonstrate the final model on new/unseen 
+input or provide an appropriate project 
+demonstration. 
+19. Conclusion 
+Summarize the methodology, findings, 
+limitations, and possible future improvements. 
+ 
+8. Minimum Technical Requirements 
+• 
+Perform EDA using appropriate plots and statistical summaries. 
+• 
+Handle missing values and explain the selected strategy. 
+• 
+Identify and discuss outliers where relevant. 
+• 
+Perform appropriate encoding for categorical variables. 
+• 
+Apply feature scaling when required by selected algorithms. 
+• 
+Use at least three suitable Machine Learning models. 
+• 
+Include a baseline model. 
+• 
+Perform hyperparameter tuning for at least two selected models where meaningful 
+hyperparameters exist. 
+• 
+Use cross-validation where appropriate during model development. 
+• 
+Use evaluation metrics suitable for the problem. 
+• 
+Prepare a final model-comparison table. 
+• 
+Perform error analysis and discuss limitations. 
+
+
+=== PAGE 4 ===
+ECSCI24302 – Machine Learning Essentials 
+ 
+9. Choosing Evaluation Metrics 
+The evaluation metrics must match the type of Machine Learning problem. 
+Problem Type 
+Possible Metrics 
+Classification 
+Accuracy, Precision, Recall, F1-score, ROC-AUC, 
+Confusion Matrix 
+Regression 
+MAE, MSE, RMSE, R² 
+Clustering 
+Silhouette Score and appropriate cluster-
+analysis measures 
+Other problems 
+Use metrics appropriate to the specific problem 
+and justify the choice. 
+ 
+Students must explain why the selected metrics are appropriate for their problem. 
+10. Timeline and Milestones 
+Phase 
+Timeline 
+Expected Deliverable 
+Phase 1: Team & Dataset 
+Finalization 
+17–30 September 2026 
+Team members, project title, 
+problem statement, dataset 
+source/link, and brief 
+justification. 
+Phase 2: Problem & Dataset 
+Study 
+1–7 October 2026 
+Problem definition, dataset 
+description, feature/target 
+identification, and initial data-
+quality analysis. 
+Phase 3: EDA & Preprocessing 
+8–17 October 2026 
+EDA plots, observations, 
+missing-value treatment, 
+outlier analysis, encoding, 
+scaling, and cleaned 
+data/pipeline. 
+Phase 4: Feature Engineering 
+& Baseline 
+18–23 October 2026 
+Engineered/selected features 
+and baseline model with initial 
+evaluation. 
+Phase 5: Model Development & 
+Tuning 
+24–31 October 2026 
+At least three ML models, 
+hyperparameter tuning, cross-
+validation where appropriate, 
+and experiment records. 
+Phase 6: Final Evaluation & 
+Documentation 
+1–7 November 2026 
+Final evaluation, model 
+comparison, error analysis, 
+report, presentation, and 
+demonstration. 
+ 
+Mandatory deadlines: Team and dataset finalization by 30 September 2026. Complete project 
+submission by 7 November 2026 (first week of November). 
+11. Project Proposal – Due 30 September 2026 
+1. Team member names and enrollment numbers. 
+2. Project title. 
+3. Problem statement. 
+4. Motivation and real-world relevance. 
+
+
+=== PAGE 5 ===
+ECSCI24302 – Machine Learning Essentials 
+ 
+5. Dataset name and source (Kaggle or UCI). 
+6. Dataset link. 
+7. Number of observations and features. 
+8. Target variable and its type, if applicable. 
+9. Expected ML task: classification, regression, clustering, etc. 
+10. Proposed Machine Learning models. 
+11. Expected evaluation metrics. 
+12. Final Project Report Structure 
+Title Page 
+Abstract / Project Summary 
+1. Introduction 
+2. Problem Statement and Motivation 
+3. Dataset Description and Source 
+4. Data Understanding and EDA 
+5. Data Preprocessing 
+6. Feature Engineering and Feature Selection 
+7. Machine Learning Methodology 
+8. Baseline Model 
+9. Model Development 
+10. Hyperparameter Tuning 
+11. Results and Model Comparison 
+12. Error Analysis 
+13. Model Interpretation 
+14. Limitations 
+15. Conclusion and Future Work 
+References 
+13. Results to be Reported 
+• 
+Dataset summary table. 
+• 
+Missing-value and duplicate analysis. 
+• 
+Important EDA visualizations with observations. 
+• 
+Preprocessing decisions and justification. 
+• 
+Feature engineering/selection details. 
+• 
+Baseline model results. 
+• 
+Results of at least three ML models. 
+• 
+Hyperparameter search space and selected parameters. 
+• 
+Cross-validation results where applicable. 
+• 
+Final test-set performance. 
+• 
+Appropriate prediction/error plots. 
+• 
+Final model comparison table. 
+• 
+Error analysis. 
+• 
+Feature importance/model interpretation where applicable. 
+
+
+=== PAGE 6 ===
+ECSCI24302 – Machine Learning Essentials 
+ 
+14. Model Comparison Table 
+Model 
+Best 
+Hyperparameters 
+Validation Result 
+Test Metric(s) 
+Observations 
+Baseline 
+ 
+ 
+ 
+ 
+Model 1 
+ 
+ 
+ 
+ 
+Model 2 
+ 
+ 
+ 
+ 
+Model 3 
+ 
+ 
+ 
+ 
+Additional Model 
+(if used) 
+ 
+ 
+ 
+ 
+ 
+The final selected model must be justified using experimental evidence. Students should consider 
+performance as well as model complexity, interpretability, computational requirements, and 
+suitability for the problem. 
+15. Data Leakage and Experimental Practice 
+Students must ensure that information from the test set does not influence model training, 
+preprocessing decisions, feature selection, or hyperparameter tuning. 
+• 
+Fit data-dependent preprocessing steps using training data only. 
+• 
+Do not use the test set to select hyperparameters. 
+• 
+Do not repeatedly inspect test performance and modify the model based on it. 
+• 
+Use pipelines where appropriate. 
+• 
+Identify and document features that may contain target or future information. 
+16. Tools and Technologies 
+• 
+Python 
+• 
+NumPy 
+• 
+Pandas 
+• 
+Matplotlib / Seaborn 
+• 
+Scikit-learn 
+• 
+Jupyter Notebook / Google Colab 
+• 
+Other libraries only when necessary and properly documented. 
+17. Academic Integrity 
+• 
+All dataset sources must be clearly cited. 
+• 
+Code obtained or adapted from external sources must be acknowledged. 
+• 
+Plagiarism in code, report, analysis, or presentation is not permitted. 
+• 
+Students must understand and be able to explain all code used in their project. 
+• 
+Each team member must be able to explain their contribution and the complete project pipeline 
+during the viva. 
+18. Assessment Scheme 
+Component 
+Weightage 
+Problem formulation & dataset selection 
+10% 
+
+
+=== PAGE 7 ===
+ECSCI24302 – Machine Learning Essentials 
+ 
+EDA & data preprocessing 
+20% 
+Feature engineering & selection 
+10% 
+Model development & implementation 
+20% 
+Hyperparameter tuning & evaluation 
+15% 
+Analysis, interpretation & model comparison 
+10% 
+Final report & presentation/demo 
+10% 
+Viva voce 
+5% 
+Total 
+100% 
+ 
+19. Viva Voce – Areas of Evaluation 
+• 
+Understanding of the selected dataset. 
+• 
+Reason for selecting the problem and dataset. 
+• 
+Understanding of preprocessing steps. 
+• 
+Reason for selecting features. 
+• 
+Understanding of selected algorithms. 
+• 
+Understanding of hyperparameters. 
+• 
+Interpretation of evaluation metrics. 
+• 
+Ability to explain model comparison. 
+• 
+Understanding of overfitting, underfitting, and data leakage. 
+• 
+Ability to explain the team's own code and results. 
+20. Final Presentation / Demonstration 
+• 
+Problem and motivation 
+• 
+Dataset and EDA 
+• 
+Preprocessing and feature engineering 
+• 
+Models developed 
+• 
+Hyperparameter tuning 
+• 
+Evaluation and comparison 
+• 
+Error analysis 
+• 
+Final model and prediction/demo 
+• 
+Limitations and future work 
+21. Final Submission Checklist 
+• 
+Team of 2–3 members finalized. 
+• 
+Dataset and project finalized by 30 September 2026. 
+• 
+Dataset source and link documented. 
+• 
+Problem statement clearly defined. 
+• 
+Complete ML pipeline demonstrated. 
+• 
+EDA completed with meaningful observations. 
+• 
+Data preprocessing documented. 
+• 
+Feature engineering/selection documented. 
+• 
+At least three suitable ML models trained. 
+• 
+Hyperparameter tuning performed where applicable. 
+• 
+Final evaluation performed on unseen test data. 
+
+
+=== PAGE 8 ===
+ECSCI24302 – Machine Learning Essentials 
+ 
+• 
+Model comparison table included. 
+• 
+Error analysis included. 
+• 
+Final report completed. 
+• 
+Code/notebook organized and reproducible. 
+• 
+Presentation and demonstration prepared. 
+• 
+Project completed and submitted by 7 November 2026. 
+
+
