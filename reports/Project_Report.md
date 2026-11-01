@@ -709,5 +709,3 @@ The primary limitations are the use of a 10,000-record model-development sample,
 The project therefore serves as a practical demonstration of a complete machine learning pipeline while identifying clear directions for improving predictive reliability and computational efficiency.
 
 ---
-
-*Report prepared for ECSCI24302 – Machine Learning Essentials, Project-Based Learning submission.*
